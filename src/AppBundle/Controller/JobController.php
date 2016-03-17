@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -62,11 +63,18 @@ class JobController extends Controller
     /**
      * Finds and displays a Job entity.
      *
+     * @param Job $job
      * @Route("/{id}", name="job_show")
+     * @return Template
      * @Method("GET")
      */
     public function showAction(Job $job)
     {
+
+        if(!$job)
+        {
+            throw $this->createNotFoundException('Unable to find Job entity.');
+        }
         $deleteForm = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', array(
