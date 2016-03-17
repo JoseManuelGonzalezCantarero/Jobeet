@@ -64,7 +64,7 @@ class JobController extends Controller
      * Finds and displays a Job entity.
      *
      * @param Job $job
-     * @Route("/{id}", name="job_show")
+     * @Route("/{company}/{location}/{id}/{position}", name="job_show", requirements={"id": "\d+"})
      * @return Template
      * @Method("GET")
      */
@@ -113,7 +113,7 @@ class JobController extends Controller
     /**
      * Deletes a Job entity.
      *
-     * @Route("/{id}", name="job_delete")
+     * @Route("/{id}/delete", name="job_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Job $job)

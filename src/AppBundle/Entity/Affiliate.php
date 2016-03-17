@@ -58,7 +58,7 @@ class Affiliate
     private $createdAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category", inversedBy="affiliates")
      * @ORM\JoinTable(name="category_affiliate", joinColumns={@ORM\JoinColumn(name="affiliate_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")})
      */
