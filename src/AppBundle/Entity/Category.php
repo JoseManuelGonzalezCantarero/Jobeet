@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\Jobeet;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="categories")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Category
 {
@@ -39,6 +41,15 @@ class Category
     private $affiliates;
 
     private $activeJobs;
+
+    private $more_jobs;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
 
 
     /**
@@ -106,6 +117,35 @@ class Category
     public function getActiveJobs()
     {
         return $this->activeJobs;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function setSlugValue()
+    {
+        $this->slug = Jobeet::slugify($this->getName());
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setMoreJobs($jobs)
+    {
+        $this->more_jobs = $jobs >= 0 ? $jobs : 0;
+    }
+
+    public function getMoreJobs()
+    {
+        return $this->more_jobs;
     }
 
     public function __toString()
