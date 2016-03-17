@@ -29,10 +29,9 @@ class CategoryController extends Controller
         $activeJobsQuery = $em->getRepository('AppBundle:Job')->getActiveJobsQuery($category->getId());
         $pagination = $paginator->paginate(
             $activeJobsQuery, /* query NOT result */
-            $request->query->getInt('page', 1), $this->getParameter('max_jobs_on_homepage')
+            $request->query->getInt("page", $request->get('page')), $this->getParameter('max_jobs_on_category')
         );
         return $this->render('category/show.html.twig', array(
-            'category' => $category,
             'pagination' => $pagination
         ));
     }

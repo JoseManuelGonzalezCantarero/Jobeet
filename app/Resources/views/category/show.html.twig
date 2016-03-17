@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    Jobs in the {{ category.name }} category
+    Jobs in the {{ pagination['0'].category.name }} category
 {% endblock %}
 
 {% block stylesheets %}
@@ -14,7 +14,13 @@
         <div class="feed">
             <a href="">Feed</a>
         </div>
-        <h1>{{ category.name }}</h1>
+        <h1>{{ pagination['0'].category.name }}</h1>
     </div>
-    {{ include ('includes/list.html.twig', {'jobs': category.activejobs}) }}
+    {{ include ('includes/list.html.twig', {'jobs': pagination}) }}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <div class="pagination_desc">
+        <strong>{{ pagination.getTotalItemCount }}</strong> {{ pagination.getTotalItemCount == 1 ? 'job' : 'jobs' }} in this category
+    </div>
 {% endblock %}
