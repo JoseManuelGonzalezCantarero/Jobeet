@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -27,10 +28,15 @@ class JobController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $jobs = $em->getRepository('AppBundle:Job')->findAll();
+        $categories = $em->getRepository('AppBundle:Category')->getWithJobs();
+
+        foreach($categories as $category)
+        {
+            $category->setActiveJobs($em->getRepository('AppBundle:Job')->getActiveJobs($category->getId(), $this->container->getParameter('max_jobs_on_homepage')));
+        }
 
         return $this->render('job/index.html.twig', array(
-            'jobs' => $jobs,
+            'categories' => $categories,
         ));
     }
 
@@ -63,18 +69,15 @@ class JobController extends Controller
     /**
      * Finds and displays a Job entity.
      *
-     * @param Job $job
+     * @param string $id
      * @Route("/{company}/{location}/{id}/{position}", name="job_show", requirements={"id": "\d+"})
      * @return Template
      * @Method("GET")
      */
-    public function showAction(Job $job)
+    public function showAction($id)
     {
-
-        if(!$job)
-        {
-            throw $this->createNotFoundException('Unable to find Job entity.');
-        }
+        $em = $this->getDoctrine()->getManager();
+        $job = $em->getRepository('AppBundle:Job')->getActiveJob($id);
         $deleteForm = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', array(
@@ -113,6 +116,9 @@ class JobController extends Controller
     /**
      * Deletes a Job entity.
      *
+     * @param Request $request
+     * @param Job $job
+     * @return RedirectResponse
      * @Route("/{id}/delete", name="job_delete")
      * @Method("DELETE")
      */
@@ -133,11 +139,11 @@ class JobController extends Controller
     /**
      * Creates a form to delete a Job entity.
      *
-     * @param Job $job The Job entity
+     * @param Job $job
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm(Job $job)
+    private function createDeleteForm($job)
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('job_delete', array('id' => $job->getId())))

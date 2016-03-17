@@ -5,18 +5,28 @@
 {% endblock %}
 {% block content %}
     <div id="jobs">
-        <table class="jobs">
-            {% for job in jobs %}
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td class="location">{{ job.location }}</td>
-                    <td class="position">
-                        <a href="{{ path('job_show', { 'id': job.id, 'company': job.companyslug, 'location': job.locationslug, 'position': job.positionslug }) }}">
-                            {{ job.position }}
-                        </a>
-                    </td>
-                    <td class="company">{{ job.company }}</td>
-                </tr>
-            {% endfor %}
-        </table>
+        {% for category in categories %}
+            <div>
+                <div class="category">
+                    <div class="feed">
+                        <a href="">Feed</a>
+                    </div>
+                    <h1>{{ category.name }}</h1>
+                </div>
+                <table class="jobs">
+                    {% for entity in category.activejobs %}
+                        <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                            <td class="location">{{ entity.location }}</td>
+                            <td class="position">
+                                <a href="{{ path('job_show', { 'id': entity.id, 'company': entity.companyslug, 'location': entity.locationslug, 'position': entity.positionslug }) }}">
+                                    {{ entity.position }}
+                                </a>
+                            </td>
+                            <td class="company">{{ entity.company }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
