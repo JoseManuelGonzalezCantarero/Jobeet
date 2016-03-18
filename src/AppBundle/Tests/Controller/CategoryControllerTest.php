@@ -1,6 +1,6 @@
 <?php
 
-namespace IbwJobeetBundleTestsController;
+namespace AppBundle\Tests\Controller;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -13,7 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand;
 
-class JobControllerTest extends WebTestCase
+class CategoryControllerTest extends WebTestCase
 {
     private $em;
     private $application;
@@ -70,12 +70,12 @@ class JobControllerTest extends WebTestCase
         $executor->execute($loader->getFixtures());
     }
 
-    public function testIndex()
+    public function testShow()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
 
-        $this->assertEquals('AppBundle\Controller\JobController::indexAction', $client->getRequest()->attributes->get('_controller'));
-        $this->assertTrue($crawler->filter('.jobs td.position:contains("Expired")')->count() == 0);
+        $crawler = $client->request('GET', '/category/index');
+        $this->assertEquals('AppBundle\Controller\CategoryController::showAction', $client->getRequest()->attributes->get('_controller'));
+        $this->assertTrue(200 === $client->getResponse()->getStatusCode());
     }
 }
