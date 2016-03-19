@@ -2,8 +2,12 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Job;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,22 +20,21 @@ class JobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type')
+            ->add('type', ChoiceType::class, array(
+                'choices_as_values' => true,
+                'choices' => Job::getTypes(),
+                'expanded' => true
+            ))
+            ->add('category')
             ->add('company')
-            ->add('logo')
-            ->add('url')
+            ->add('file', FileType::class, array('label' => 'Company logo', 'required' => false))
+            ->add('url', UrlType::class)
             ->add('position')
             ->add('location')
             ->add('description')
-            ->add('howToApply')
-            ->add('token')
-            ->add('isPublic')
-            ->add('isActivated')
-            ->add('email')
-            ->add('expiresAt', DateTimeType::class)
-            ->add('createdAt', DateTimeType::class)
-            ->add('updatedAt', DateTimeType::class)
-            ->add('category')
+            ->add('howToApply', null, array('label' => 'How to apply?'))
+            ->add('isPublic', null, array('label' => 'Public?'))
+            ->add('email', EmailType::class)
         ;
     }
     
