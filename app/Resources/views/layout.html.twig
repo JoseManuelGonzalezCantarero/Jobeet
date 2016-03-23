@@ -15,6 +15,16 @@
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 </head>
 <body>
+<div id="job_history">
+    Recent viewed jobs:
+    <ul>
+        {% for job in app.session.get('job_history') %}
+            <li>
+                <a href="{{ path('job_show', { 'id': job.id, 'company': job.companyslug, 'location': job.locationslug, 'position': job.positionslug }) }}">{{ job.position }} - {{ job.company }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 <div id="container">
     <div id="header">
         <div class="content">

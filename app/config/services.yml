@@ -1,9 +1,18 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
-parameters:
-#    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    jobeet.admin.category:
+        class: AppBundle\Admin\CategoryAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: jobeet, label: Categories }
+        arguments:
+            - ~
+            - AppBundle\Entity\Category
+            - 'AppBundle:CategoryAdmin'
+
+    jobeet.admin.job:
+        class: AppBundle\Admin\JobAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: jobeet, label: Jobs }
+        arguments:
+            - ~
+            - AppBundle\Entity\Job
+            - 'AppBundle:JobAdmin'

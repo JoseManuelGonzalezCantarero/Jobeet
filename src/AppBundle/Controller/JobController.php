@@ -89,6 +89,23 @@ class JobController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $job = $em->getRepository('AppBundle:Job')->getActiveJob($id);
+        if(!$job)
+        {
+            throw $this->createNotFoundException('Unable to find Job entity.');
+        }
+        $session = $this->get('session');
+        $jobs = $session->get('job_history', array());
+        $jobStored = array('id' => $job->getId(), 'position' =>$job->getPosition(), 'company' => $job->getCompany(),
+            'companyslug' => $job->getCompanySlug(), 'locationslug' => $job->getLocationSlug(),
+            'positionslug' => $job->getPositionSlug());
+
+        if (!in_array($jobStored, $jobs)) {
+            // add the current job at the beginning of the array
+            array_unshift($jobs, $jobStored);
+
+            // store the new job history back into the session
+            $session->set('job_history', array_slice($jobs, 0, 3));
+        }
         $deleteForm = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', array(
