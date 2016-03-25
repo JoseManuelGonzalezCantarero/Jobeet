@@ -12,7 +12,7 @@
 {% block content %}
     <div class="category">
         <div class="feed">
-            <a href="">Feed</a>
+            <a href="{{ path('categoryPage', { 'slug': category.slug, '_format': 'atom' }) }}">Feed</a>
         </div>
         <h1>{{ pagination['0'].category.name }}</h1>
     </div>

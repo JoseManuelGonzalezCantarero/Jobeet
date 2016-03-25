@@ -11,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Job;
 use AppBundle\Form\JobType;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Job controller.
@@ -25,7 +27,7 @@ class JobController extends Controller
      * @Route("/", name="job_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -39,9 +41,22 @@ class JobController extends Controller
                 $this->container->getParameter('max_jobs_on_homepage'));
         }
 
-        return $this->render('job/index.html.twig', array(
+        $latestJob = $em->getRepository('AppBundle:Job')->getLatestPost();
+
+        if($latestJob) {
+            $lastUpdated = $latestJob->getCreatedAt()->format(DATE_ATOM);
+        } else {
+            $lastUpdated = new \DateTime();
+            $lastUpdated = $lastUpdated->format(DATE_ATOM);
+        }
+
+        $format = $request->getRequestFormat();
+
+        return $this->render('job/index.'.$format.'.twig', array(
             'categories' => $categories,
-        ));
+            'lastUpdated' => $lastUpdated,
+            'feedId' => sha1($this->get('router')->generate('job_index', array('_format'=> 'atom'), UrlGeneratorInterface::ABSOLUTE_PATH)),
+            ));
     }
 
     /**
