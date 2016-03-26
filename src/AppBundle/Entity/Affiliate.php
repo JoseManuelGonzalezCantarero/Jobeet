@@ -3,12 +3,15 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Affiliate
  *
  * @ORM\Table(name="affiliate")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AffiliateRepository")
+ * @UniqueEntity("email")
  * @ORM\HasLifecycleCallbacks()
  */
 class Affiliate
@@ -26,6 +29,7 @@ class Affiliate
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255)
+     * @Assert\Url()
      */
     private $url;
 
@@ -33,6 +37,8 @@ class Affiliate
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
@@ -219,5 +225,43 @@ class Affiliate
     public function setCreatedAtValue()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    public function addCategory(Category $categories)
+    {
+        $this->categories[] = $categories;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @ORM\PrePersist()
+     */
+    public function setTokenValue()
+    {
+        if(!$this->getToken()) {
+            $token = sha1($this->getEmail().rand(11111, 99999));
+            $this->token = $token;
+        }
+
+        return $this;
+    }
+
+    public function activate()
+    {
+        if(!$this->getIsActive()) {
+            $this->setIsActive(true);
+        }
+
+        return $this->isActive;
+    }
+
+    public function deactivate()
+    {
+        if($this->getIsActive()) {
+            $this->setIsActive(false);
+        }
+
+        return $this->isActive;
     }
 }

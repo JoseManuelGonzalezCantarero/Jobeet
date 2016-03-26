@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 
 /**
  * AffiliateRepository
@@ -12,4 +13,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class AffiliateRepository extends EntityRepository
 {
+    public function getForToken($token)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->where('a.isActive = :active')
+            ->setParameter('active', 1)
+            ->andWhere('a.token = :token')
+            ->setParameter('token', $token)
+            ->setMaxResults(1)
+        ;
+
+        try{
+            $affiliate = $qb->getQuery()->getSingleResult();
+        } catch(NoResultException $e){
+            $affiliate = null;
+        }
+
+        return $affiliate;
+    }
 }

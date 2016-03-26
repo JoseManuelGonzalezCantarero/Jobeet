@@ -16,3 +16,12 @@ services:
             - ~
             - AppBundle\Entity\Job
             - 'AppBundle:JobAdmin'
+
+    jobeet.admin.affiliate:
+            class: AppBundle\Admin\AffiliateAdmin
+            tags:
+                - { name: sonata.admin, manager_type: orm, group: jobeet, label: Affiliates }
+            arguments:
+                - ~
+                - AppBundle\Entity\Affiliate
+                - 'AppBundle:AffiliateAdmin'
