@@ -25,6 +25,17 @@ class AffiliateAdminController extends Controller
             foreach($selectedModels as $selectedModel) {
                 $selectedModel->activate();
                 $modelManager->update($selectedModel);
+
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('Jobeet affiliate token')
+                    ->setFrom('address@example.com')
+                    ->setTo($selectedModel->getEmail())
+                    ->setBody(
+                      $this->renderView(':affiliate:email.txt.twig', array(
+                          'affiliate' => $selectedModel->getToken()
+                      ))
+                    );
+                $this->get('mailer')->send($message);
             }
         } catch(Exception $e) {
             $this->get('session')->getFlashBag()->add('sonata_flash_error', $e->getMessage());
@@ -76,6 +87,17 @@ class AffiliateAdminController extends Controller
         try {
             $affiliate->setIsActive(true);
             $em->flush();
+
+            $message = \Swift_Message::newInstance()
+                ->setSubject('Jobeet affiliate token')
+                ->setFrom('address@example.com')
+                ->setTo($affiliate->getEmail())
+                ->setBody(
+                    $this->renderView(':affiliate:email.txt.twig', array(
+                        'affiliate' => $affiliate->getToken()
+                    ))
+                );
+            $this->get('mailer')->send($message);
         } catch(Exception $e) {
             $this->get('session')->getFlashBag()->add('sonata_flash_error', $e->getMessage());
 
